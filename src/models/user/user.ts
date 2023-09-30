@@ -31,7 +31,7 @@ const userSchema: Schema<User> = new Schema<User>(
     userImage: {
       type: String,
       required: true,
-      default: "",
+      default: "/modern-logo.png",
     },
     password: {
       type: String,
@@ -69,6 +69,8 @@ userSchema.methods.getJWTToken = function () {
   });
 };
 userSchema.methods.compareJWTToken = async function (password: string) {
+  console.log(`🚀 ~ password:`, password);
+  console.log(`🚀 ~ this.password:`, this.password);
   return await bcrypt.compare(password, this.password);
 };
 

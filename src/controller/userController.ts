@@ -35,15 +35,22 @@ export const register = catchAsyncError(
         message: "User exist please try Log IN",
       });
     } else {
-      const user = await User.create({
-        name,
-        email,
-        userImage,
-        password,
-        role,
-      });
-      user.password = null;
-      sendToken(user, res, 200);
+      try {
+        const user = await User.create({
+          name,
+          email,
+          userImage,
+          password,
+          role,
+        });
+        user.password = null;
+        sendToken(user, res, 200);
+      } catch (error) {
+        res.status(401).json({
+          success: true,
+          error,
+        });
+      }
     }
   }
 );
@@ -81,10 +88,17 @@ export const login = catchAsyncError(
       email: string;
       password: string;
     } = req.body;
+    console.log(
+      `🚀 ~ email,
+      password,:`,
+      email,
+      password
+    );
     const existed = await User.findOne({ email });
 
     if (existed) {
-      const result = await existed.compareJWTToken(password);
+      const result = existed.compareJWTToken(password);
+      console.log(`🚀 ~ result:`, result);
       if (result) {
         existed.password = null;
         sendToken(existed, res, 200);
